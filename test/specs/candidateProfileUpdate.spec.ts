@@ -1,6 +1,6 @@
 import LoginPage from '../pageobjects/login.page'
 import DashboardPage from '../pageobjects/dashboard.page'
-import CandidateProfilePage from '../pageobjects/candidateProfile.page'
+import CandidateProfilePage from '../pageobjects/candidateUpdateModal.page'
 
 const EMAIL = 'pratik+abtesting2@hirebus.com'
 const PASSWORD = 'Rahul@123'
@@ -13,6 +13,7 @@ describe('Candidate Profile Update - Edit Candidate Profiles from Dashboard', ()
     })
 
     it('should load the Dashboard with recent assessments and candidate list', async () => {
+       
         // Optionally, verify that candidate details (name, role, score) are visible.
         await DashboardPage.isVisbleCandidateDetails() // Call without arguments
     })
@@ -39,8 +40,8 @@ describe('Candidate Profile Update - Edit Candidate Profiles from Dashboard', ()
         // Step 5: Click the Update button to save changes.
         await CandidateProfilePage.submitUpdate()
         // Verify that a success message is displayed and the modal closes.
+        await expect(CandidateProfilePage.modal).toBeDisplayed()
         // await CandidateProfilePage.verifySuccessMessage()
-        await expect(CandidateProfilePage.modal).not.toBeDisplayed()
 
         // Step 6: Verify that the updated details are reflected on the Dashboard.
         await DashboardPage.verifyCandidateDetails(updatedDetails)

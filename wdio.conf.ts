@@ -1,60 +1,99 @@
+// wdio.config.ts
+import { JSONReporter, HTMLReportGenerator } from 'wdio-json-html-reporter';
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Convert the KOBITON env variable to a boolean
+const useKobiton = process.env.KOBITON === 'true';
+
+
 export const config: WebdriverIO.Config = {
     runner: 'local',
     tsConfigPath: './tsconfig.json',
-
-    specs: [
-        './test/specs/**/*.ts'
-    ],
+    specs: ['./test/specs/**/*.ts'],
     exclude: [],
-
-    maxInstances: 1,
-
-    // Kobiton server configuration
-    protocol: 'https',
-    hostname: 'api.kobiton.com', // Use Kobiton's hostname
-    port: 443, // Set port to 443 for HTTPS
-    user: 'alphabin',
-    key: '576df69c-a63c-438d-a373-4545cd729093',
-
-    capabilities: [{
-        // Platform capabilities
-        platformName: 'Android', // or 'iOS' based on your needs
-        'appium:platformVersion': '13', // Set platform version
-        'appium:browserName': 'chrome', // Set browser name
-        
-        // Kobiton specific capabilities
-        'kobiton:sessionName': 'Automation test session',
-        'kobiton:sessionDescription': '',
-        'kobiton:deviceOrientation': 'portrait',
-        'kobiton:captureScreenshots': true,
-        'kobiton:useConfiguration': 'kobitoncompayloadcapturetest',
-        'appium:deviceGroup': 'ORGANIZATION',
-        'appium:udid': 'RFCW32AK7QR', // Specify UDID of the device
-        'appium:noReset': false,
-        'appium:fullReset': true,
-        'appium:autoWebview': true,
-        'kobiton:retainDurationInSeconds': 0,
-    }],
-
-    // WebdriverIO configurations
+    maxInstances: useKobiton ? 1 : 10,
     logLevel: 'info',
     waitforTimeout: 10000,
     connectionRetryTimeout: 120000,
     connectionRetryCount: 3,
-
     services: ['appium'],
-
     framework: 'mocha',
-    reporters: ['spec', 'junit', ['allure', { outputDir: 'allure-results' }]],
-
+    reporters: [
+        [JSONReporter, { outputFile: './reports/test-results.json', screenshotOption: 'OnFailure' }],  // Options: "No", "OnFailure", "Full"
+    ],
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000
     },
-
+    capabilities: [],
     afterTest: async function (test, context, { error, result, duration, passed, retries }) {
         if (!passed) {
             await browser.takeScreenshot();
         }
+    },
+    onComplete: async function () {
+        const outputFilePath = './reports/test-report.html';
+        const jsonFolder = './reports'; // Directory where JSON reports are saved
+
+        const reportGenerator = new HTMLReportGenerator(outputFilePath);
+        await reportGenerator.convertJSONFolderToHTML(jsonFolder);
     }
 };
+
+// Check the environment to merge the correct configuration.
+if (useKobiton) {
+    // Kobiton configuration settings
+    Object.assign(config, {
+        protocol: 'https',
+        hostname: 'api.kobiton.com', // Use Kobiton's hostname
+        port: 443, // Set port to 443 for HTTPS
+        user: process.env.KOBITON_USERNAME || 'alphabin',
+        key: process.env.KOBITON_API_KEY || '576df69c-a63c-438d-a373-4545cd729093',
+        capabilities: [{
+            platformName: 'Android',
+            'appium:platformVersion': '13',
+            'appium:browserName': 'chrome',
+            'kobiton:sessionName': process.env.SESSION_NAME || 'Automation test session',
+            'kobiton:sessionDescription': '',
+            'kobiton:deviceOrientation': 'portrait',
+            'kobiton:captureScreenshots': true,
+            'kobiton:useConfiguration': 'kobitoncompayloadcapturetest',
+            'appium:deviceGroup': 'ORGANIZATION',
+            'appium:udid': process.env.KOBITON_REAL_DEVICE_ID || 'RFCW32AK7QR', // Specify the device UDID for Kobiton
+            'appium:noReset': false,
+            'appium:fullReset': true,
+            'appium:autoWebview': true,
+            'kobiton:retainDurationInSeconds': 0,
+        }]
+    });
+} else {
+    // Local real device configuration settings
+    Object.assign(config, {
+        port: 4723,
+        capabilities: [{
+            platformName: 'Android',
+            browserName: 'Chrome',
+            'appium:automationName': 'UiAutomator2',
+            'appium:deviceName': process.env.DEVICE_NAME || 'Redmi 12',
+            'appium:platformVersion': '13.0',
+            'appium:udid': process.env.REAL_DEVICE_ID || '0a7922ac7d76',
+            'appium:noReset': false,
+            'appium:chromedriverExecutable': '/opt/homebrew/bin/chromedriver',
+            'appium:uiautomator2ServerLaunchTimeout': 240000,
+            'appium:adbExecTimeout': 240000,
+            'appium:androidInstallTimeout': 300000,
+            'appium:disableWindowAnimation': true,
+            'appium:autoGrantPermissions': true,
+            'appium:systemPort': 8200,
+            'appium:mjpegServerPort': 7810,
+            'appium:clearDeviceLogsOnStart': true,
+            'appium:skipDeviceInitialization': false,
+            'appium:skipServerInstallation': false,
+            webSocketUrl: true,
+            unhandledPromptBehavior: 'ignore'
+        }]
+    });
+}
+
+export default config;
