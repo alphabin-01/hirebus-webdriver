@@ -16,8 +16,8 @@ class CandidateProfilePage {
     get statusDropdown() { return $('//input[@id="react-select-4-input"]'); }
 
     // Update button and success message
-    get updateButton() { return $('button[data-testid="update-button"]'); }
-    get successMessage() { return $('//*[contains(text(),"Update successful")]'); }
+    get updateButton() { return $('//button[@data-testid="update-button"]'); }
+    get successMessage() { return $('//div[text()="Update successful"]'); }
 
     async verifyModalDisplayed() {
         await this.modal.waitForDisplayed({ timeout: 10000 });
@@ -53,17 +53,23 @@ class CandidateProfilePage {
         await this.updateButton.waitForClickable({ timeout: 10000 });
         await this.updateButton.scrollIntoView();
         await this.updateButton.click();
+        console.log('Clicked on update button');
+        
     }
 
     async verifySuccessMessage() {
-        await this.successMessage.waitForDisplayed({ timeout: 10000 });
-
+        console.log('Waiting for success message to be displayed...');
+        await this.successMessage.waitForDisplayed({
+            timeout: 10000,
+            timeoutMsg: 'Success message did not appear after 10 seconds'
+        });
+        console.log('Success message is displayed');
         // Try different methods to get the text content
-        const text = await browser.execute((element) => {
-            return element.textContent || element.innerText;
-        }, await this.successMessage);
+        // const text = await browser.execute((element) => {
+        //     return element.textContent || element.innerText;
+        // }, await this.successMessage);
 
-        expect(text.trim()).toEqual('Update successful');
+        // expect(text.trim()).toEqual('Update successful');
     }
 
 

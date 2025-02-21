@@ -18,12 +18,14 @@
     "cross-env": "^7.0.3",
     "wdio-json-html-reporter": "^1.3.3",
     "wdio-wait-for": "^3.1.0"
-  },
+    },
   "scripts": {
     "test:local": "cross-env KOBITON=false wdio run wdio.conf.ts --logLevel error",
-    "test:kobiton": "cross-env KOBITON=true wdio run wdio.conf.ts --logLevel error"
+    "test:kobiton": "cross-env KOBITON=true wdio run wdio.conf.ts --logLevel error",
+    "test:browserstack": "cross-env USE_BROWSERSTACK=true wdio run wdio.conf.ts --logLevel error"
   },
   "dependencies": {
+    "@wdio/browserstack-service": "^9.9.3",
     "dotenv": "^16.4.7",
     "wdio-html-nice-reporter": "^8.1.7"
   }

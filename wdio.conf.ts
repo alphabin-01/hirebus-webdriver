@@ -3,21 +3,26 @@ import { JSONReporter, HTMLReportGenerator } from 'wdio-json-html-reporter';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Convert the KOBITON env variable to a boolean
+// Convert the environment variables to booleans
 const useKobiton = process.env.KOBITON === 'true';
-
+const useBrowserStack = process.env.USE_BROWSERSTACK === 'true';
 
 export const config: WebdriverIO.Config = {
     runner: 'local',
     tsConfigPath: './tsconfig.json',
     specs: ['./test/specs/**/*.ts'],
     exclude: [],
-    maxInstances: useKobiton ? 1 : 10,
+    maxInstances: useKobiton ? 1 : (useBrowserStack ? 10 : 10),
     logLevel: 'info',
     waitforTimeout: 10000,
     connectionRetryTimeout: 120000,
     connectionRetryCount: 3,
-    services: ['appium'],
+    services: useBrowserStack
+        ? [['browserstack', {
+            browserstackLocal: true,
+            buildIdentifier: process.env.BUILD_NUMBER || 'local_build',
+        }]]
+        : ['appium'],
     framework: 'mocha',
     reporters: [
         [JSONReporter, { outputFile: './reports/test-results.json', screenshotOption: 'OnFailure' }],  // Options: "No", "OnFailure", "Full"
@@ -41,7 +46,7 @@ export const config: WebdriverIO.Config = {
     }
 };
 
-// Check the environment to merge the correct configuration.
+// Check the environment to merge the correct configuration
 if (useKobiton) {
     // Kobiton configuration settings
     Object.assign(config, {
@@ -66,6 +71,51 @@ if (useKobiton) {
             'appium:autoWebview': true,
             'kobiton:retainDurationInSeconds': 0,
         }]
+    });
+} else if (useBrowserStack) {
+    // BrowserStack configuration
+    Object.assign(config, {
+        user: process.env.BROWSERSTACK_USERNAME || 'savanalphabin_6gSdPc',
+        key: process.env.BROWSERSTACK_ACCESS_KEY || 'wZtqUDykbsc1D7tSeZxy',
+        hostname: 'hub.browserstack.com',
+        capabilities: [
+            {
+                'bstack:options': {
+                    deviceName: 'Samsung Galaxy S22 Plus',
+                    platformVersion: '12.0',
+                    platformName: 'android',
+                    projectName: "BrowserStack Samples",
+                    buildName: process.env.BUILD_NUMBER || 'browserstack build',
+                    sessionName: 'BStack parallel webdriverio-appium',
+                    debug: true,
+                    networkLogs: true
+                }
+            },
+            {
+                'bstack:options': {
+                    deviceName: 'Samsung Galaxy S23 Ultra',
+                    platformVersion: '13.0',
+                    platformName: 'android',
+                    projectName: "BrowserStack Samples",
+                    buildName: process.env.BUILD_NUMBER || 'browserstack build',
+                    sessionName: 'BStack parallel webdriverio-appium',
+                    debug: true,
+                    networkLogs: true
+                }
+            },
+            {
+                'bstack:options': {
+                    deviceName: 'Samsung Galaxy S22',
+                    platformVersion: '12.0',
+                    platformName: 'android',
+                    projectName: "BrowserStack Samples",
+                    buildName: process.env.BUILD_NUMBER || 'browserstack build',
+                    sessionName: 'BStack parallel webdriverio-appium',
+                    debug: true,
+                    networkLogs: true
+                }
+            }
+        ]
     });
 } else {
     // Local real device configuration settings

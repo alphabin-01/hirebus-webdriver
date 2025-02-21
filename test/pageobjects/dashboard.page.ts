@@ -12,7 +12,7 @@ class DashboardPage {
         await browser.waitUntil(async () => {
             try {
                 const nameDisplayed = await this.candidateName.isDisplayed();
-                const roleDisplayed = await this.candidateRole.isDisplayed(); 
+                const roleDisplayed = await this.candidateRole.isDisplayed();
                 const scoreDisplayed = await this.candidateScore.isDisplayed();
                 return nameDisplayed && roleDisplayed && scoreDisplayed;
             } catch (error) {
