@@ -17,7 +17,7 @@ class CandidateProfilePage {
 
     // Update button and success message
     get updateButton() { return $('//button[@data-testid="update-button"]'); }
-    get successMessage() { return $('//div[text()="Update successful"]'); }
+    get successMessage() { return $('div[role="alert"] div:nth-child(2)'); }
 
     async verifyModalDisplayed() {
         await this.modal.waitForDisplayed({ timeout: 10000 });
@@ -50,33 +50,24 @@ class CandidateProfilePage {
     }
 
     async submitUpdate() {
-        await this.updateButton.waitForClickable({ timeout: 10000 });
         await this.updateButton.scrollIntoView();
         await this.updateButton.click();
-        console.log('Clicked on update button');
-        
     }
-
+    
     async verifySuccessMessage() {
-        console.log('Waiting for success message to be displayed...');
         await this.successMessage.waitForDisplayed({
             timeout: 10000,
             timeoutMsg: 'Success message did not appear after 10 seconds'
         });
-        console.log('Success message is displayed');
-        // Try different methods to get the text content
-        // const text = await browser.execute((element) => {
-        //     return element.textContent || element.innerText;
-        // }, await this.successMessage);
-
-        // expect(text.trim()).toEqual('Update successful');
+        const text = await this.successMessage.getText();
+        await expect(text).toBe('Update successful');
     }
 
 
     async viewProfile() {
         const profileSelector = '[data-testid="viewProfile"]:nth-of-type(1)';
         await browser.waitUntil(
-            async () => (await $(profileSelector)).isDisplayed(),
+            async () => $(profileSelector).isDisplayed(),
             { timeout: 5000, timeoutMsg: 'Element not found' }
         );
         await $(profileSelector).click();

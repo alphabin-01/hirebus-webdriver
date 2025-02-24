@@ -25,7 +25,7 @@ export const config: WebdriverIO.Config = {
         : ['appium'],
     framework: 'mocha',
     reporters: [
-        [JSONReporter, { outputFile: './reports/test-results.json', screenshotOption: 'OnFailure' }],  // Options: "No", "OnFailure", "Full"
+        // [JSONReporter, { outputFile: './reports/test-results.json', screenshotOption: 'OnFailure' }],  // Options: "No", "OnFailure", "Full"
     ],
     mochaOpts: {
         ui: 'bdd',
@@ -37,13 +37,13 @@ export const config: WebdriverIO.Config = {
             await browser.takeScreenshot();
         }
     },
-    onComplete: async function () {
-        const outputFilePath = './reports/test-report.html';
-        const jsonFolder = './reports'; // Directory where JSON reports are saved
+    // onComplete: async function () {
+    //     const outputFilePath = './reports/test-report.html';
+    //     const jsonFolder = './reports'; // Directory where JSON reports are saved
 
-        const reportGenerator = new HTMLReportGenerator(outputFilePath);
-        await reportGenerator.convertJSONFolderToHTML(jsonFolder);
-    }
+    //     const reportGenerator = new HTMLReportGenerator(outputFilePath);
+    //     await reportGenerator.convertJSONFolderToHTML(jsonFolder);
+    // }
 };
 
 // Check the environment to merge the correct configuration
