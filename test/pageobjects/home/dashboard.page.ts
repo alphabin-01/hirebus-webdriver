@@ -1,6 +1,13 @@
 import { $ } from '@wdio/globals'
+import loginPage from '../login.page'
 
 class DashboardPage {
+    // header
+    get hamburgerMenu() { return $('//nav[@data-testid="navbar"]//label[@for="my-drawer-2"]') }
+    get candidateLink() { return $('(//a[@data-testid="sidebar-link"])[2]') }
+    get homeLink() { return $('(//a[@data-testid="sidebar-link"])[1]') }
+
+    // Candidate Details
     get candidateName() { return $('button:nth-child(1) div:nth-child(1) div:nth-child(2) div:nth-child(1)') }
     get candidateCompany() { return $("button:nth-child(1) div:nth-child(1) div:nth-child(2) div:nth-child(2)") }
     get candidateRole() { return $('(//button[1]/div[2]/div[1])[1]') }
@@ -121,6 +128,20 @@ class DashboardPage {
         return parseInt(text, 10);
     }
 
+    async logout() {
+        const currentUrl = await browser.getUrl();
+        if (!currentUrl.includes('/login')) {
+            // Navigate to home
+            await browser.navigateTo(`https://${process.env.ENVIRONMENT}.hirebus.com`);
+            // Click profile and then logout
+            await this.profileButton.waitForClickable({ timeout: 10000 });
+            await this.profileButton.click();
+            await this.logoutOption.waitForClickable({ timeout: 10000 });
+            await this.logoutOption.click();
+            // Verify that the email input is displayed on the login screen
+            await expect(loginPage.emailInput).toBeDisplayed({ wait: 10000 });
+        }
+    }
 }
 
 export default new DashboardPage()

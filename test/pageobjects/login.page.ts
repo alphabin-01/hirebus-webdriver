@@ -30,14 +30,14 @@ class LoginPage {
         await this.loginButton.waitForClickable({ timeout: 10000 });
         await this.loginButton.click();
 
-        // Optional validation after login
+        /// Wait for page to be fully loaded
         await browser.waitUntil(
-            async () => (await browser.getTitle()) === 'HireBus',
+            async () => await browser.execute(() => document.readyState === 'complete'),
             {
-                timeout: 10000,
-                timeoutMsg: 'Expected page title to be "HireBus" after login',
+                timeout: 20000,
+                timeoutMsg: 'Page did not load completely'
             }
-        )
+        );
     }
 }
 

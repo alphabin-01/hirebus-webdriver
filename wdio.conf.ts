@@ -70,6 +70,7 @@ if (useKobiton) {
             'appium:fullReset': true,
             'appium:autoWebview': true,
             'kobiton:retainDurationInSeconds': 0,
+        
         }]
     });
 } else if (useBrowserStack) {
@@ -125,23 +126,23 @@ if (useKobiton) {
             platformName: 'Android',
             browserName: 'Chrome',
             'appium:automationName': 'UiAutomator2',
-            'appium:deviceName': process.env.DEVICE_NAME || 'Redmi 12',
-            'appium:platformVersion': '13.0',
-            'appium:udid': process.env.REAL_DEVICE_ID || '0a7922ac7d76',
+            'appium:deviceName': "realme C21Y" ||process.env.DEVICE_NAME || 'Redmi 12',
+            'appium:platformVersion': '11',
+            'appium:udid': "0a7922ac7d76" || process.env.REAL_DEVICE_ID || '2119264710AA0DNM',
             'appium:noReset': false,
             'appium:chromedriverExecutable': '/opt/homebrew/bin/chromedriver',
-            'appium:uiautomator2ServerLaunchTimeout': 240000,
-            'appium:adbExecTimeout': 240000,
-            'appium:androidInstallTimeout': 300000,
-            'appium:disableWindowAnimation': true,
+            'appium:uiautomator2ServerLaunch÷Timeout': 240000,
+            // 'appium:adbExecTimeout': 240000,
+            // 'appium:androidInstallTimeout': 300000,
+            // 'appium:disableWindowAnimation': true,
             'appium:autoGrantPermissions': true,
-            'appium:systemPort': 8200,
-            'appium:mjpegServerPort': 7810,
-            'appium:clearDeviceLogsOnStart': true,
-            'appium:skipDeviceInitialization': false,
-            'appium:skipServerInstallation': false,
-            webSocketUrl: true,
-            unhandledPromptBehavior: 'ignore'
+            // 'appium:systemPort': 8200,
+            // 'appium:mjpegServerPort': 7810,
+            // 'appium:clearDeviceLogsOnStart': true,
+            // 'appium:skipDeviceInitialization': false,
+            // 'appium:skipServerInstallation': false,
+            // webSocketUrl: true,
+            // unhandledPromptBehavior: 'ignore',
         }]
     });
 }
