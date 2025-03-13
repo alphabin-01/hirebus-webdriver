@@ -30,11 +30,12 @@ jobs:
           END_HOUR=19
           RANDOM_HOUR=$((RANDOM % (END_HOUR - START_HOUR + 1) + START_HOUR))
           RANDOM_MINUTE=$((RANDOM % 60))
-          echo "Random execution time set for $RANDOM_HOUR:$RANDOM_MINUTE IST"
+          RANDOM_SECOND=$((RANDOM % 60))
+          echo "Random execution time set for $RANDOM_HOUR:$RANDOM_MINUTE:$RANDOM_SECOND IST"
           
           # Calculate the waiting time in seconds
-          CURRENT_TIME=$(TZ=Asia/Kolkata date +%H:%M)
-          TARGET_TIME=$(printf "%02d:%02d" $RANDOM_HOUR $RANDOM_MINUTE)
+          CURRENT_TIME=$(TZ=Asia/Kolkata date +%H:%M:%S)
+          TARGET_TIME=$(printf "%02d:%02d:%02d" $RANDOM_HOUR $RANDOM_MINUTE $RANDOM_SECOND)
           
           NOW_SECONDS=$(date -d "$CURRENT_TIME" +%s)
           TARGET_SECONDS=$(date -d "$TARGET_TIME" +%s)
